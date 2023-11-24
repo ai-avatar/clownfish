@@ -54,7 +54,7 @@ def parser_for_type(node, schema):
     if 'type' in node:
         if node['type'] == 'string':
             return StringParser.init()
-        if node['type'] == 'number':
+        if node['type'] in ['number', 'integer']: # TODO add separate integer parser
             return NumberParser.init()
         if node['type'] == 'array':
             return ListParser.init(node, schema)
@@ -79,6 +79,10 @@ class NumberParser(NodeParser):
         is_digit = char in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
         is_period = char == '.'
 
+        # skip whitespace
+        if char in [' ', '\t', '\n', '\r']:
+            return state
+        
         if len(char) == 0:
             if not is_digit:
                 return None
